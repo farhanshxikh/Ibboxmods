@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particle Animation and Timer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Particle animation styles */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: #00FF00; /* Green color for the glowing particles */
+            border-radius: 50%;
+            animation: move 2s infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes move {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(300px, 300px);
+            }
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            color: white;
+            text-align: center;
+            top: 30%;
+        }
+
+        .text {
+            font-size: 30px;
+        }
+
+        .button {
+            padding: 15px 30px;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 10px;
+        }
+
+        .button:hover {
+            background-color: #555;
+        }
+
+        .list-view {
+            margin-top: 20px;
+            list-style-type: none;
+            padding: 0;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: scroll;
+            border: 1px solid white;
+            background-color: #222;
+            margin-left: 25%;
+            margin-right: 25%;
+        }
+
+        .list-item {
+            color: white;
+            padding: 10px;
+            border-bottom: 1px solid #333;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Particle Animation Canvas -->
+    <div class="particles"></div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <div class="text" id="period1m">Period: Loading...</div>
+        <div class="text" id="timer1m">Timer: 00:00</div>
+        <div class="text" id="resultText">Result: None</div>
+
+        <!-- Buttons -->
+        <button class="button" id="checkResultBtn">CHECK RESULT</button>
+        <button class="button" id="historyBtn">HISTORY</button>
+
+        <!-- List View for Results -->
+        <ul id="resultList" class="list-view">
+            <!-- Results will be appended here -->
+        </ul>
+    </div>
+
+    <script>
+        // Particle animation generation
+        function createParticles() {
+            let particlesContainer = document.querySelector('.particles');
+            for (let i = 0; i < 100; i++) {
+                let particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.left = Math.random() * window.innerWidth + 'px';
+                particle.style.top = Math.random() * window.innerHeight + 'px';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Timer logic
+        let timer;
+        let lastPeriod = "";
+
+        function updateTime() {
+            let now = new Date();
+            let seconds = now.getSeconds();
+            let remainingSeconds = 60 - seconds;
+            let minutes = now.getMinutes();
+            let totalMinutes = now.getHours() * 60 + minutes;
+
+            // Period text
+            let periodText = new Date().toISOString().slice(0, 10) + '1000' + (10001 + totalMinutes);
+            document.getElementById('period1m').textContent = 'Period: ' + periodText;
+
+            // Timer text
+            let formattedTime = String(remainingSeconds).padStart(2, '0');
+            document.getElementById('timer1m').textContent = 'Timer: 00 :' + formattedTime;
+        }
+
+        // Handle Check Result Button Click
+        document.getElementById('checkResultBtn').addEventListener('click', function() {
+            let currentPeriod = document.getElementById('period1m').textContent;
+
+            if (currentPeriod !== lastPeriod) {
+                lastPeriod = currentPeriod;
+                let resultOptions = ['BIG 💚', 'BIG ❤️', 'SMALL 💚', 'SMALL ❤️', 'SKIP'];
+                let randomResult = resultOptions[Math.floor(Math.random() * resultOptions.length)];
+
+                // Update result text
+                document.getElementById('resultText').textContent = 'Result: ' + randomResult;
+
+                // Add to list view
+                let li = document.createElement('li');
+                li.classList.add('list-item');
+                li.textContent = randomResult;
+                document.getElementById('resultList').appendChild(li);
+            } else {
+                document.getElementById('resultText').textContent = 'RUKJA LAUDE NEXT PERIOD TO AANE DE';
+            }
+        });
+
+        // Handle History Button Click
+        document.getElementById('historyBtn').addEventListener('click', function() {
+            alert('History functionality is under development.');
+        });
+
+        // Initialize the timer update and particle animation
+        setInterval(updateTime, 1000);  // Update every second
+        createParticles();  // Create particle animation
+
+    </script>
+
+</body>
+</html>
